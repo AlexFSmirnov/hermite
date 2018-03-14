@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Hermite curves</title>
+
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Mina" rel="stylesheet">
+    <script src="js/config.js"></script>
+    <script src="js/script.js"></script>
+</head>
+<body onload="setup();">
+    <div class="top-menu" id="top-menu">
+        <button class   = "btn selected" 
+                id      = "play" 
+                style   = "float: left;" 
+                onclick = "sim_toggle();"> Start simulation </button>
+
+        <button class   = "btn obstacles" 
+                id      = "obstacles"
+                style   = "float: right;"> Obstacles        </button>
+
+        <label class="switch" id="switch">
+            <input type="checkbox" id="checkbox" onchange="on_switch();"/>
+            <span class="slider" id="slider"></span>
+        </label>
+
+        <button class   = "btn selected points" 
+                id      = "cpoints" 
+                style   = "float: right;">Control points    </button>
+    </div>
+    <div class="canvases">
+        <canvas id="path-canvas"     width="" height=""></canvas>
+        <canvas id="entities-canvas" width="" height=""></canvas>
+        <canvas id="draw-canvas"     width="" height=""></canvas>
+    </div>
+</body>
+</html>  
+

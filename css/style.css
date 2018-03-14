@@ -1,0 +1,91 @@
+canvas {
+    border   : 3px solid black;
+    position : absolute;
+    top      : 0;
+    bottom   : 0;
+    left     : 0;
+    right    : 0;
+    margin   : auto;
+
+    image-rendering: optimizeSpeed;             /* Older versions of FF          */
+    image-rendering: -moz-crisp-edges;          /* FF 6.0+                       */
+    image-rendering: -webkit-optimize-contrast; /* Safari                        */
+    image-rendering: -o-crisp-edges;            /* OS X & Windows Opera (12.02+) */
+    image-rendering: pixelated;                 /* Awesome future-browsers       */
+    -ms-interpolation-mode: nearest-neighbor;   /* IE                            */
+}
+
+.top-menu {
+    display  : inline-block;
+    position : fixed;
+    height   : 4%;
+    left     : 0;
+    right    : 0;
+    background-color: #B77600;
+}
+
+/* Hide default HTML checkbox */
+.switch input {display:none;}
+
+/* Switch and slider */
+.switch {
+    float    : right;
+    position : relative;
+    height   : 100%;
+}
+.slider {
+    position : absolute;
+    cursor   : pointer;
+    top      : 0;
+    left     : 0;
+    right    : 0;
+    bottom   : 0;
+    background-color  : #B77600;
+    -webkit-transition: .4s;
+    transition        : .4s;
+}
+.slider:before {
+    border-radius: 40%;
+    position: absolute;
+    content: "";
+    height: 80%;
+    width: 45%;
+    left: 5%;
+    bottom: 10%;
+    background-color: #FFAE0C;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+input:checked + .slider:before {
+    -webkit-transform: translateX(100%);
+    -ms-transform: translateX(100%);
+    transform: translateX(100%);
+}
+
+.btn {
+    position     : relative;
+
+    height       : 100%;
+    font-family  : "Mina";
+    font-size    : 20pt;
+  
+    border-width : 0;
+    outline      : none;
+    color        : #111;
+    background-color: #B77600;
+    
+    transition: background-color .2s;
+}
+.btn.selected {
+    background-color: #FFAE0C;
+}
+.btn:active {
+    background-color: #FFC65E;
+}
+  
+body {
+    margin: 0px; 
+}
+html { 
+    overflow:  hidden; 
+}
