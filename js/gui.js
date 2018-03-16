@@ -35,7 +35,7 @@ function on_mouse_down(canvas, event) {
         for (var i = 1; i < vectors.length; i++) 
             vectors[i].draw(vecs_ctx, "grey");
         // and pushing the new vector
-        vectors.push(new Vector(mouse_pos.x, mouse_pos.y, true));
+        vectors.push(new Vector(mouse_pos.x, mouse_pos.y));
     }
 }
 
@@ -123,7 +123,8 @@ function sim_toggle() {
         btn.innerHTML = "Start simulation";
     } else if (vectors.length >= 2) {
         sim_on = true;
-        btn.innerHTML = "Start simulation";
+        btn.innerHTML = "Pause simulation";
+        sim();
     }
 }
 function vectors_toggle() {
@@ -164,10 +165,12 @@ function adjust_window() {
     } else {
         var style = "width: " + c_w + "px; ";
     }
-    document.getElementById('path-canvas').style     = style + "z-index: 3;";
-    document.getElementById('vectors-canvas').style = style + "z-index: 2;";
-    document.getElementById('draw-canvas').style     = style + "z-index: 1;";
-    document.getElementById('switch').style.width    = (c_h * 0.04) * 2 + "px";
+    document.getElementById('path-canvas').style      = style + "z-index: 0;";
+    document.getElementById('vectors-canvas').style   = style + "z-index: 1;";
+    document.getElementById('robot-canvas').style     = style + "z-index: 2;";
+    document.getElementById('obstacles-canvas').style = style + "z-index: 3;";
+    document.getElementById('draw-canvas').style      = style + "z-index: 4;";
+    document.getElementById('switch').style.width     = (c_h * 0.04) * 2 + "px";
 }
 
 function setup() {
@@ -175,25 +178,31 @@ function setup() {
     document.body.style.backgroundColor = BACKGROUND_COLOR;
     window.onresize = function(event) {adjust_window();};
 
-    draw_canvas = document.getElementById('draw-canvas');
-    draw_ctx    = draw_canvas.getContext('2d');
     path_canvas = document.getElementById('path-canvas');
     path_ctx    = path_canvas.getContext('2d');
-    vecs_canvas  = document.getElementById('vectors-canvas');
-    vecs_ctx     = vecs_canvas.getContext('2d');
+    vecs_canvas = document.getElementById('vectors-canvas');
+    vecs_ctx    = vecs_canvas.getContext('2d');
+    robo_canvas = document.getElementById('robot-canvas');
+    robo_ctx    = robo_canvas.getContext('2d');
+    obst_canvas = document.getElementById('obstacles-canvas');
+    obst_ctx    = obst_canvas.getContext('2d');
+    draw_canvas = document.getElementById('draw-canvas');
+    draw_ctx    = draw_canvas.getContext('2d');
 
     var client_w = document.documentElement.clientWidth;
     var client_h = document.documentElement.clientHeight;
     client_w -= (client_h * 0.04);
     client_h -= (client_h * 0.08 + 6);
-    draw_canvas.width  = client_w;
-    draw_canvas.height = client_h;
     path_canvas.width  = client_w;
     path_canvas.height = client_h;
-    vecs_canvas.width   = client_w;
+    vecs_canvas.width  = client_w;
+    vecs_canvas.height = client_h;
+    robo_canvas.width  = client_w;
+    robo_canvas.height = client_h;
+    obst_canvas.width  = client_w;
+    obst_canvas.height = client_h;
     draw_canvas.width  = client_w;
     draw_canvas.height = client_h;
-    vecs_canvas.height  = client_h;
 
     // General
     document.getElementById('cpoints').addEventListener('click',
@@ -201,18 +210,18 @@ function setup() {
     document.getElementById('obstacles').addEventListener('click',
         function(event) {on_click(1)});
     // Touchscreen
-    path_canvas.addEventListener('touchstart', 
+    draw_canvas.addEventListener('touchstart', 
         function(event) {on_mouse_down(vecs_canvas, event)});
-    path_canvas.addEventListener('touchmove',
+    draw_canvas.addEventListener('touchmove',
         function(event) {on_mouse_move(vecs_canvas, event)});
-    path_canvas.addEventListener('touchend',
+    draw_canvas.addEventListener('touchend',
         function(event) {on_mouse_up(vecs_canvas, event)});
     // Mouse
-    path_canvas.addEventListener('mousedown', 
+    draw_canvas.addEventListener('mousedown', 
         function(event) {on_mouse_down(vecs_canvas, event)});
-    path_canvas.addEventListener('mousemove',
+    draw_canvas.addEventListener('mousemove',
         function(event) {on_mouse_move(vecs_canvas, event)});
-    path_canvas.addEventListener('mouseup',
+    draw_canvas.addEventListener('mouseup',
         function(event) {on_mouse_up(vecs_canvas, event)});
 
     adjust_window();
