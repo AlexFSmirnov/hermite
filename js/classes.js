@@ -43,6 +43,10 @@ class Robot {
         this.curve_point = 0;
     }
 
+    get_collision() {
+        jkj
+    }
+
     step() {
         this.curve_point = (this.curve_point + 1) % (curves.length * curve_accuracy);
     }
@@ -71,5 +75,61 @@ class Robot {
 
         robo_ctx.stroke();
         robo_ctx.restore();
+    }
+}
+
+class Obstacle {
+    constructor(x, y) {
+        this._x1 = x;
+        this._y1 = y;
+        this._x2 = x;
+        this._y2 = y;
+    }
+
+    get width() {
+        return Math.abs(this.x2 - this.x1);
+    }
+    get height() {
+        return Math.abs(this.y2 - this.y1);
+    }
+    get x1() {
+        return Math.min(this._x1, this._x2);
+    }
+    get x2() {
+        return Math.max(this._x1, this._x2);
+    }
+    get y1() {
+        return Math.min(this._y1, this._y2);
+    }
+    get y2() {
+        return Math.max(this._y1, this._y2);
+    }
+    set_ends(x2, y2) {
+        this._x2 = x2;
+        this._y2 = y2;
+    }
+    move([init_x, init_y], new_x, new_y) {
+        this._x1 += new_x - init_x;
+        this._y1 += new_y - init_y;
+        this._x2 += new_x - init_x;
+        this._y2 += new_y - init_y;
+    }
+
+    is_in(x, y) {
+        return (this.x1 <= x && x <= this.x2 &&
+                this.y1 <= y && y <= this.y2);
+    }
+
+    draw(ctx) {
+        ctx.beginPath();
+        ctx.fillStyle   = "grey";
+        ctx.strokeStyle = "cyan";
+        ctx.lineWidth   = 3;
+        ctx.fillRect(this.x1, this.y1, this.width, this.height);
+        ctx.strokeRect(this.x1, this.y1, this.width, this.height);
+        ctx.stroke();
+    }
+    clear(ctx) {
+        ctx.clearRect(this.x1-3, this.y1-3, this.width+6, this.height+6);
     }
 }

@@ -9,4 +9,5 @@ robot_speed      = 20;
 robot_sight      = {radius: 80, angle: 100};
 
 vectors          = [];
+obstacles        = [];
 curves           = [];

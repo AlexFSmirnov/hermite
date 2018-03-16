@@ -1,5 +1,7 @@
 /* MOUSE AND SELECTION */
-mouse_down = false;
+mouse_down     = false;
+moved_obstacle = -1;
+prev_pos       = [];
 function get_mouse_pos(canvas, evt) {
     if (evt.type.startsWith("touch")) {
         if (evt.touches.length != 0) {
@@ -36,6 +38,18 @@ function on_mouse_down(canvas, event) {
             vectors[i].draw(vecs_ctx, "grey");
         // and pushing the new vector
         vectors.push(new Vector(mouse_pos.x, mouse_pos.y));
+    } else if (action_type == "obstacles") {
+        // If an existing obstacle is clicked, switching to "move" mode
+        for (var i = 0; i < obstacles.length; i++) {
+            if (obstacles[i].is_in(mouse_pos.x, mouse_pos.y)) {
+                moved_obstacle = i;
+                prev_pos = [mouse_pos.x, mouse_pos.y];
+                obstacles[i].clear(obst_ctx);
+                return;
+            }
+        }
+        // Otherwise, creating a new obstacle
+        obstacles.push(new Obstacle(mouse_pos.x, mouse_pos.y));
     }
 }
 
@@ -45,8 +59,10 @@ function on_mouse_up(canvas, event) {
     var mouse_pos = get_mouse_pos(canvas, event);
     if (action_type == "control points") {
         // Marking the last vector as Finish point
-        vectors[vectors.length - 1].draw_arrow = draw_arrows;
-        vectors[vectors.length - 1].draw(vecs_ctx, "red");
+        if (vectors.length > 0) {
+            vectors[vectors.length - 1].draw_arrow = draw_arrows;
+            vectors[vectors.length - 1].draw(vecs_ctx, "red");
+        }
         
         // Drawing and saving the curve if any 
         if (vectors.length > 1) {
@@ -56,18 +72,26 @@ function on_mouse_up(canvas, event) {
             draw_curve(path_ctx, curve);
         }
 
-        // Clearing the "Draw canvas"
-        draw_ctx.clearRect(0, 0, draw_canvas.width, draw_canvas.height);
+    } else if (action_type == "obstacles") {
+        if (obstacles.length > 0) {
+            // Drawing either a moved or a drawn obstacle
+            if (moved_obstacle != -1) {
+                obstacles[moved_obstacle].draw(obst_ctx);
+                moved_obstacle = -1;
+            } else {
+                obstacles[obstacles.length - 1].draw(obst_ctx);
+            }
+        }
     }
+    // Clearing the "Draw canvas"
+    draw_ctx.clearRect(0, 0, draw_canvas.width, draw_canvas.height);
 }
 
 function on_mouse_move(canvas, event) {
     if (mouse_down) {
         var mouse_pos = get_mouse_pos(canvas, event);
+        draw_ctx.clearRect(0, 0, draw_canvas.width, draw_canvas.height);
         if (action_type == "control points") {
-            // Clearing the "Draw canvas"
-            draw_ctx.clearRect(0, 0, draw_canvas.width, draw_canvas.height);
-            
             // Updating the last vector
             vectors[vectors.length - 1].x2 = mouse_pos.x;
             vectors[vectors.length - 1].y2 = mouse_pos.y;
@@ -81,6 +105,21 @@ function on_mouse_move(canvas, event) {
 
             // And drawing the vector
             vectors[vectors.length - 1].draw(draw_ctx, "grey");
+        } else if (action_type == "obstacles") {
+            if (obstacles.length > 0) {
+                // Based on previous information either moving 
+                // an obstacle, or drawing it.
+                if (moved_obstacle != -1) {
+                    // Moving an obstacle
+                    obstacles[moved_obstacle].move(prev_pos, mouse_pos.x, mouse_pos.y);
+                    obstacles[moved_obstacle].draw(draw_ctx);
+                    prev_pos = [mouse_pos.x, mouse_pos.y];
+                } else {
+                    // Updating ends of a drawed obstacle
+                    obstacles[obstacles.length - 1].set_ends(mouse_pos.x, mouse_pos.y);
+                    obstacles[obstacles.length - 1].draw(draw_ctx);
+                }
+            }
         }
     }
 }
@@ -93,13 +132,13 @@ function on_switch() {
     var obstacles = document.getElementById("obstacles");
     var cpoints   = document.getElementById("cpoints");
     if (checkbox.checked) {  // Switch to obstacles
-        action_type = 1;
-        obstacles.classList.value = "btn obstacles selected"
-        cpoints  .classList.value = "btn points"
+        action_type = "obstacles";
+        obstacles.classList.value = "btn selected";
+        cpoints  .classList.value = "btn";
     } else {                 // Switch to control points
-        action_type = 0;
-        obstacles.classList.value = "btn obstacles"
-        cpoints  .classList.value = "btn points selected"
+        action_type = "control points";
+        obstacles.classList.value = "btn";
+        cpoints  .classList.value = "btn selected";
     }
 }
 function on_click(btn) {
@@ -107,13 +146,15 @@ function on_click(btn) {
     var obstacles = document.getElementById("obstacles");
     var cpoints   = document.getElementById("cpoints");
     if (btn == 0) {  // "Control points" pressed
+        action_type = "control points";
         checkbox.checked = false;
-        obstacles.classList.value = "btn obstacles"
-        cpoints  .classList.value = "btn points selected"
+        obstacles.classList.value = "btn";
+        cpoints  .classList.value = "btn selected";
     } else {         // "Obstacles" pressed
+        action_type = "obstacles";
         checkbox.checked = true;
-        obstacles.classList.value = "btn obstacles selected"
-        cpoints  .classList.value = "btn points"
+        obstacles.classList.value = "btn selected";
+        cpoints  .classList.value = "btn";
     }
 }
 function sim_toggle() {
