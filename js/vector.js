@@ -1,9 +1,9 @@
 class Vector { 
-    constructor(x1, y1, x2, y2) {
-        this.x1 = x1;
-        this.y1 = y1;
-        this.x2 = x2;
-        this.y2 = y2;
+    constructor(x, y) {
+        this.x1 = x;
+        this.y1 = y;
+        this.x2 = x;
+        this.y2 = y;
         this.aa = Math.PI - 0.3;  // Arrow angle
     }
     
@@ -19,13 +19,17 @@ class Vector {
     draw(ctx, rgb) {
         ctx.beginPath();
         ctx.strokeStyle = rgb;
+        ctx.fillStyle   = rgb;
+        ctx.lineWidth   = 3;
+        ctx.arc(this.x1, this.y1, 2, 0, 2 * Math.PI, false);
         ctx.moveTo(this.x1, this.y1);
         ctx.lineTo(this.x2, this.y2);
-        ctx.lineTo(this.x2 + Math.cos(-this.aa - this.angle) * this.length / 10,
+        ctx.moveTo(this.x2 + Math.cos(-this.aa - this.angle) * this.length / 10,
                   this.y2 - Math.sin(-this.aa - this.angle) * this.length / 10);
-        ctx.moveTo(this.x2, this.y2);
-        ctx.lineTo(this.x2 + Math.cos(this.aa - this.angle) * this.length / 10,
+        ctx.lineTo(this.x2, this.y2);
+        ctx.moveTo(this.x2 + Math.cos(this.aa - this.angle) * this.length / 10,
                   this.y2 - Math.sin(this.aa - this.angle) * this.length / 10);
+        ctx.lineTo(this.x2, this.y2);
         ctx.stroke();
     }
 }

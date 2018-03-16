@@ -23,13 +23,11 @@ function on_mouse_down(canvas, event) {
     mouse_down = true;
     var mouse_pos = get_mouse_pos(canvas, event);
     if (action_type == "control points") {
-        // Marking the first vector as Start point,
+        // Marking the first one as Start point
         if (vectors.length > 0) 
             vectors[0].draw(ent_ctx, "green");
-        // all the previous ones as intermediate points 
         for (var i = 1; i < vectors.length; i++) 
             vectors[i].draw(ent_ctx, "grey");
-        // and pushing the new vector
         vectors.push(new Vector(mouse_pos.x, mouse_pos.y));
     }
 }
@@ -37,6 +35,7 @@ function on_mouse_down(canvas, event) {
 function on_mouse_up(canvas, event) {
     mouse_down = false;
     var mouse_pos = get_mouse_pos(canvas, event);
+    if (action_type == 0) {
     if (action_type == "control points") {
         // Marking the last vector as Finish point
         vectors[vectors.length - 1].draw(draw_ctx, "red");
@@ -67,10 +66,8 @@ function on_mouse_move(canvas, event) {
                 var curve = calc_curve(vectors[vectors.length - 2],
                                        vectors[vectors.length - 1]);
                 draw_curve(draw_ctx, curve);
+                vectors[vectors.length - 1].draw(draw_ctx, "#FFA500");
             }
-
-            // And drawing the vector
-            vectors[vectors.length - 1].draw(draw_ctx, "grey");
         }
     }
 }
@@ -118,6 +115,7 @@ function sim_toggle() {
 }
 
 function adjust_window() {
+    // -73 for top menu
     var c_w = document.documentElement.clientWidth;
     var c_h = document.documentElement.clientHeight;
     c_w -= (c_h * 0.04);
@@ -127,9 +125,9 @@ function adjust_window() {
     } else {
         var style = "width: " + c_w + "px; ";
     }
-    document.getElementById('path-canvas').style     = style + "z-index: 3;";
+    document.getElementById('path-canvas').style     = style + "z-index: 1;";
     document.getElementById('entities-canvas').style = style + "z-index: 2;";
-    document.getElementById('draw-canvas').style     = style + "z-index: 1;";
+    document.getElementById('draw-canvas').style     = style + "z-index: 3;";
     document.getElementById('switch').style.width    = (c_h * 0.04) * 2 + "px";
 }
 
@@ -164,18 +162,18 @@ function setup() {
     document.getElementById('obstacles').addEventListener('click',
         function(event) {on_click(1)});
     // Touchscreen
-    path_canvas.addEventListener('touchstart', 
+    draw_canvas.addEventListener('touchstart', 
         function(event) {on_mouse_down(ent_canvas, event)});
-    path_canvas.addEventListener('touchmove',
+    draw_canvas.addEventListener('touchmove',
         function(event) {on_mouse_move(ent_canvas, event)});
-    path_canvas.addEventListener('touchend',
+    draw_canvas.addEventListener('touchend',
         function(event) {on_mouse_up(ent_canvas, event)});
     // Mouse
-    path_canvas.addEventListener('mousedown', 
+    draw_canvas.addEventListener('mousedown', 
         function(event) {on_mouse_down(ent_canvas, event)});
-    path_canvas.addEventListener('mousemove',
+    draw_canvas.addEventListener('mousemove',
         function(event) {on_mouse_move(ent_canvas, event)});
-    path_canvas.addEventListener('mouseup',
+    draw_canvas.addEventListener('mouseup',
         function(event) {on_mouse_up(ent_canvas, event)});
 
     adjust_window();
