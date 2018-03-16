@@ -6,6 +6,9 @@ class Vector {
         this.y2 = y;
         this.aa = Math.PI - 0.3;  // Arrow angle
         this.draw_arrow = true;
+        
+        // Was this vector created while avoiding obstacle?
+        this.obst = false;
     }
     
     get length() {
@@ -90,8 +93,8 @@ class Robot {
             }
 
             // Calculating new intermediate vector coordinates
-            var x1 = (this.x + robot_sight.radius * Math.cos(a));
-            var y1 = (this.y + robot_sight.radius * Math.sin(a));
+            var x1 = (this.x   + robot_sight.radius * Math.cos(a));
+            var y1 = (this.y   + robot_sight.radius * Math.sin(a));
             var x2 = (x1 + 0.3 * robot_sight.radius * Math.cos(a));
             var y2 = (y1 + 0.3 * robot_sight.radius * Math.sin(a));
 
