@@ -32,9 +32,9 @@ function calc_curve(v1, v2) {
                   d2 * v2.y1 + 
                   d3 * (v1.y2 - v1.y1) * speed_coeff + 
                   d4 * (v2.y2 - v2.y1) * speed_coeff);
-        curve.push([x, y, Math.atan2(ty, tx)]);;
+        curve.push([x, y, ty, tx]);
     }
-    curve.push([v2.x1, v2.y1, Math.atan2(v2.y2 - v2.y1, v2.x2 - v2.x1)]);
+    curve.push([v2.x1, v2.y1, v2.y2 - v2.y1, v2.x2 - v2.x1]);
     return curve;
 }
 
@@ -47,6 +47,27 @@ function draw_curve(ctx, curve) {
         ctx.lineTo(curve[i][0], curve[i][1]);
     }
     ctx.stroke();
+}
+
+function reset_path() {
+    // Clearing canvases
+    path_ctx.clearRect(0, 0, path_canvas.width, path_canvas.height);
+    vecs_ctx.clearRect(0, 0, vecs_canvas.width, vecs_canvas.height);
+
+    // Redrawing vectors
+    vectors[0].draw(vecs_ctx, "green")
+    for (var i = 1; i < vectors.length; i++) {
+        vectors[i].draw(vecs_ctx, "grey");
+    }
+    vectors[vectors.length - 1].draw(vecs_ctx, "red");
+
+    // Recalculating and redrawing curves
+    curves = [];
+    for (var i = 1; i < vectors.length; i++) {
+        var curve = calc_curve(vectors[i - 1], vectors[i]);
+        curves.push(curve);
+        draw_curve(path_ctx, curve);
+    }
 }
 
 robot = new Robot();

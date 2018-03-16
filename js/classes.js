@@ -41,20 +41,89 @@ class Vector {
 class Robot {
     constructor() {
         this.curve_point = 0;
+        this.next_vector = 0;
+        this.x = 0;
+        this.y = 0;
+        this.a = 0;
+
+        // Was this vector added while trying to avoid obstacles?
+        this.obst = false;  
     }
 
+    get_sight_points() {
+        var points = [];
+        for (var i = 0; i < robot_sight.accuracy; i++) {
+            var a = robot_sight.angle / (robot_sight.accuracy - 1) * i;
+            a = a - robot_sight.angle / 2 + this.a;
+            points.push({x: this.x + robot_sight.radius * Math.cos(a),
+                         y: this.y + robot_sight.radius * Math.sin(a),
+                         a: a});
+        }
+        return points;
+    }
     get_collision() {
-        jkj
+        for (var i = 0; i < obstacles.length; i++) {
+            var o = obstacles[i];
+            var points = this.get_sight_points();
+            for (var j = 0; j < points.length; j++) {
+                if (o.is_in(points[j].x, points[j].y)) {
+                    return [points[j], Boolean(j > points.length / 2)];
+                }
+            }
+
+        }
+        return null;
     }
 
     step() {
+        var res = this.get_collision();
+        // If collision found, trying to avoid
+        if (res) {
+            var col  = res[0];
+            var side = res[1];
+
+            // Calculating angle for avoiding the obstacle
+            if (side) {
+                var a = col.a - (robot_sight.angle / 2 + 0.2);
+            } else {
+                var a = col.a + (robot_sight.angle / 2 + 0.2);
+            }
+
+            // Calculating new intermediate vector coordinates
+            var x1 = (this.x + robot_sight.radius * Math.cos(a));
+            var y1 = (this.y + robot_sight.radius * Math.sin(a));
+            var x2 = (x1 + 0.3 * robot_sight.radius * Math.cos(a));
+            var y2 = (y1 + 0.3 * robot_sight.radius * Math.sin(a));
+
+            var v1  = new Vector(x1, y1);
+            v1.x2   = x2;
+            v1.y2   = y2;
+            v1.obst = true;
+
+            // Updating the next vector if it was the one previously 
+            // added while trying to avoid obstacles or adding the
+            // new vector before the next one otherwise
+            if (vectors[this.next_vector].obst) {
+                vectors[this.next_vector] = v1;
+            } else {
+                vectors.splice(this.next_vector, 0, v1);
+            }
+
+            // And recalculating and redrawing all curves
+            reset_path();
+        }
         this.curve_point = (this.curve_point + 1) % (curves.length * curve_accuracy);
+        this.next_vector = Math.floor(this.curve_point / curve_accuracy) + 1;
     }
 
     draw() {
         var seg = curves[(Math.floor(this.curve_point / curve_accuracy))];
-        var [x, y, a] = seg[this.curve_point % curve_accuracy];
+        var [x, y, tx, ty] = seg[this.curve_point % curve_accuracy];
+        var a = Math.atan2(tx, ty);
+        [this.x, this.y, this.a] = [x, y, a];
+
         robo_ctx.clearRect(0, 0, robo_canvas.width, robo_canvas.height);
+
         robo_ctx.save();
         robo_ctx.translate(x, y);
         robo_ctx.rotate(a + Math.PI / 2);
@@ -70,8 +139,8 @@ class Robot {
         robo_ctx.strokeStyle = "cyan";
         robo_ctx.lineWidth   = 2;
         robo_ctx.arc(0, 0, robot_sight.radius, 
-                     -Math.PI / 2 - (robot_sight.angle / 180 * Math.PI) / 2,
-                     -Math.PI / 2 + (robot_sight.angle / 180 * Math.PI) / 2);
+                     -Math.PI / 2 - robot_sight.angle / 2,
+                     -Math.PI / 2 + robot_sight.angle / 2);
 
         robo_ctx.stroke();
         robo_ctx.restore();

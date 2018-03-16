@@ -6,7 +6,9 @@ curve_accuracy   = 50;
 speed_coeff      = 5;
 
 robot_speed      = 20;
-robot_sight      = {radius: 80, angle: 100};
+robot_sight      = {radius   : 80, 
+                    angle    : 100 / 180 * Math.PI,
+                    accuracy : 10};
 
 vectors          = [];
 obstacles        = [];
