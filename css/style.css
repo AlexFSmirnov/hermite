@@ -6,13 +6,6 @@ canvas {
     left     : 0;
     right    : 0;
     margin   : auto;
-
-    image-rendering: optimizeSpeed;             /* Older versions of FF          */
-    image-rendering: -moz-crisp-edges;          /* FF 6.0+                       */
-    image-rendering: -webkit-optimize-contrast; /* Safari                        */
-    image-rendering: -o-crisp-edges;            /* OS X & Windows Opera (12.02+) */
-    image-rendering: pixelated;                 /* Awesome future-browsers       */
-    -ms-interpolation-mode: nearest-neighbor;   /* IE                            */
 }
 
 .top-menu {
@@ -45,16 +38,16 @@ canvas {
     transition        : .4s;
 }
 .slider:before {
-    border-radius: 40%;
-    position: absolute;
-    content: "";
-    height: 80%;
-    width: 45%;
-    left: 5%;
-    bottom: 10%;
-    background-color: #FFAE0C;
+    border-radius     : 40%;
+    position          : absolute;
+    content           : "";
+    height            : 80%;
+    width             : 45%;
+    left              : 5%;
+    bottom            : 10%;
+    background-color  : #FFAE0C;
     -webkit-transition: .4s;
-    transition: .4s;
+    transition        : .4s;
 }
 input:checked + .slider:before {
     -webkit-transform: translateX(100%);

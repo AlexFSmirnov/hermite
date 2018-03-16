@@ -1,9 +1,15 @@
 /* MOUSE AND SELECTION */
 mouse_down = false;
+test = [];
 function get_mouse_pos(canvas, evt) {
     if (evt.type.startsWith("touch")) {
-        var client_x = evt.touches[0].clientX;
-        var client_y = evt.touches[0].clientY;
+        if (evt.touches.length != 0) {
+            var client_x = evt.touches[0].clientX;
+            var client_y = evt.touches[0].clientY;
+        } else {
+            var client_x = evt.changedTouches[0].clientX;
+            var client_y = evt.changedTouches[0].clientY;
+        }
     } else {
         var client_x = evt.clientX;
         var client_y = evt.clientY;
@@ -35,6 +41,7 @@ function on_mouse_down(canvas, event) {
 }
 
 function on_mouse_up(canvas, event) {
+    test = event;
     mouse_down = false;
     var mouse_pos = get_mouse_pos(canvas, event);
     if (action_type == "control points") {
