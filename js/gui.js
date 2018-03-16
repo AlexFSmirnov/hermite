@@ -1,9 +1,3 @@
-/* SIMULATION STATE */
-action_type = 0;     // 0 - control points, 1 - obstacles
-sim_on      = 0;
-/* (END) SIMULATION STATE (END) */
-
-
 /* MOUSE AND SELECTION */
 mouse_down = false;
 function get_mouse_pos(canvas, evt) {
@@ -28,19 +22,32 @@ function get_mouse_pos(canvas, evt) {
 function on_mouse_down(canvas, event) {
     mouse_down = true;
     var mouse_pos = get_mouse_pos(canvas, event);
-    console.log("Mouse down: ", mouse_pos);
+    if (action_type == 0) {
+        if (vectors.length > 0) 
+            vectors[0].draw(ent_ctx, "green");
+        for (var i = 1; i < vectors.length; i++) 
+            vectors[i].draw(ent_ctx, "grey");
+        vectors.push(new Vector(mouse_pos.x, mouse_pos.y, mouse_pos.x, mouse_pos.y));
+    }
 }
 
 function on_mouse_up(canvas, event) {
     mouse_down = false;
     var mouse_pos = get_mouse_pos(canvas, event);
-    console.log("Mouse up: ", mouse_pos);
+    if (action_type == 0) {
+        vectors[vectors.length - 1].draw(draw_ctx, "red");
+    }
 }
 
 function on_mouse_move(canvas, event) {
     if (mouse_down) {
         var mouse_pos = get_mouse_pos(canvas, event);
-        console.log("Mouse move: ", mouse_pos);
+        if (action_type == 0) {
+            draw_ctx.clearRect(0, 0, draw_canvas.width, draw_canvas.height);
+            vectors[vectors.length - 1].x2 = mouse_pos.x;
+            vectors[vectors.length - 1].y2 = mouse_pos.y;
+            vectors[vectors.length - 1].draw(draw_ctx, "#FFA500");
+        }
     }
 }
 /* (END) MOUSE AND SELECTION (END) */
