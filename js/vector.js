@@ -1,9 +1,10 @@
 class Vector { 
-    constructor(x, y) {
+    constructor(x, y, draw_arrow) {
         this.x1 = x;
         this.y1 = y;
         this.x2 = x;
         this.y2 = y;
+        this.draw_arrow = draw_arrow;
         this.aa = Math.PI - 0.3;  // Arrow angle
     }
     
@@ -22,14 +23,16 @@ class Vector {
         ctx.fillStyle   = rgb;
         ctx.lineWidth   = 3;
         ctx.arc(this.x1, this.y1, 2, 0, 2 * Math.PI, false);
-        ctx.moveTo(this.x1, this.y1);
-        ctx.lineTo(this.x2, this.y2);
-        ctx.moveTo(this.x2 + Math.cos(-this.aa - this.angle) * this.length / 10,
-                  this.y2 - Math.sin(-this.aa - this.angle) * this.length / 10);
-        ctx.lineTo(this.x2, this.y2);
-        ctx.moveTo(this.x2 + Math.cos(this.aa - this.angle) * this.length / 10,
-                  this.y2 - Math.sin(this.aa - this.angle) * this.length / 10);
-        ctx.lineTo(this.x2, this.y2);
+        if (this.draw_arrow) {
+            ctx.moveTo(this.x1, this.y1);
+            ctx.lineTo(this.x2, this.y2);
+            ctx.moveTo(this.x2 + Math.cos(-this.aa - this.angle) * this.length / 10,
+                      this.y2 - Math.sin(-this.aa - this.angle) * this.length / 10);
+            ctx.lineTo(this.x2, this.y2);
+            ctx.moveTo(this.x2 + Math.cos(this.aa - this.angle) * this.length / 10,
+                      this.y2 - Math.sin(this.aa - this.angle) * this.length / 10);
+            ctx.lineTo(this.x2, this.y2);
+        }
         ctx.stroke();
     }
 }

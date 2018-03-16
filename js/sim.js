@@ -1,5 +1,6 @@
 action_type = "control points";
 sim_on      = 0;
+draw_arrows = 1;
 vectors     = [];
 curves      = [];
 accuracy    = 100;

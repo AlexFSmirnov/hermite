@@ -19,6 +19,11 @@
                 style   = "float: left;" 
                 onclick = "sim_toggle();"> Start simulation </button>
 
+        <button class   = "btn selected"
+                id      = "vectors"
+                style   = "float: left; margin-left: 1%";
+                onclick = "vectors_toggle();"> Vectors visible </button>
+
         <button class   = "btn obstacles" 
                 id      = "obstacles"
                 style   = "float: right;"> Obstacles        </button>
@@ -34,7 +39,7 @@
     </div>
     <div class="canvases">
         <canvas id="path-canvas"     width="" height=""></canvas>
-        <canvas id="entities-canvas" width="" height=""></canvas>
+        <canvas id="vectors-canvas" width="" height=""></canvas>
         <canvas id="draw-canvas"     width="" height=""></canvas>
     </div>
 </body>

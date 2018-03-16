@@ -1,6 +1,5 @@
 /* MOUSE AND SELECTION */
 mouse_down = false;
-test = [];
 function get_mouse_pos(canvas, evt) {
     if (evt.type.startsWith("touch")) {
         if (evt.touches.length != 0) {
@@ -31,12 +30,12 @@ function on_mouse_down(canvas, event) {
     if (action_type == "control points") {
         // Marking the first vector as Start point,
         if (vectors.length > 0) 
-            vectors[0].draw(ent_ctx, "green");
+            vectors[0].draw(vecs_ctx, "green");
         // all the previous ones as intermediate points 
         for (var i = 1; i < vectors.length; i++) 
-            vectors[i].draw(ent_ctx, "grey");
+            vectors[i].draw(vecs_ctx, "grey");
         // and pushing the new vector
-        vectors.push(new Vector(mouse_pos.x, mouse_pos.y));
+        vectors.push(new Vector(mouse_pos.x, mouse_pos.y, true));
     }
 }
 
@@ -46,7 +45,8 @@ function on_mouse_up(canvas, event) {
     var mouse_pos = get_mouse_pos(canvas, event);
     if (action_type == "control points") {
         // Marking the last vector as Finish point
-        vectors[vectors.length - 1].draw(draw_ctx, "red");
+        vectors[vectors.length - 1].draw_arrow = draw_arrows;
+        vectors[vectors.length - 1].draw(vecs_ctx, "red");
         
         // Drawing and saving the curve if any 
         if (vectors.length > 1) {
@@ -55,6 +55,9 @@ function on_mouse_up(canvas, event) {
             curves.push(curve);
             draw_curve(path_ctx, curve);
         }
+
+        // Clearing the "Draw canvas"
+        draw_ctx.clearRect(0, 0, draw_canvas.width, draw_canvas.height);
     }
 }
 
@@ -123,6 +126,33 @@ function sim_toggle() {
         btn.innerHTML = "Start simulation";
     }
 }
+function vectors_toggle() {
+    var btn = document.getElementById('vectors');
+    if (draw_arrows) {
+        draw_arrows = false;
+        btn.innerHTML = "Vectors hidden";
+        btn.classList.value = "btn";
+
+        vecs_ctx.clearRect(0, 0, vecs_canvas.width, vecs_canvas.height);
+        for (var i = 0; i < vectors.length; i++) {
+            vectors[i].draw_arrow = false;
+        }
+    } else {
+        draw_arrows = true;
+        btn.innerHTML = "Vectors visible";
+        btn.classList.value = "btn selected";
+
+        vecs_ctx.clearRect(0, 0, vecs_canvas.width, vecs_canvas.height);
+        for (var i = 0; i < vectors.length; i++) {
+            vectors[i].draw_arrow = true;
+        }
+    }
+    vectors[0].draw(vecs_ctx, "green");
+    for (var i = 1; i < vectors.length - 1; i++) {
+        vectors[i].draw(vecs_ctx, "grey");
+    }
+    vectors[vectors.length - 1].draw(vecs_ctx, "red");
+}
 
 function adjust_window() {
     var c_w = document.documentElement.clientWidth;
@@ -135,7 +165,7 @@ function adjust_window() {
         var style = "width: " + c_w + "px; ";
     }
     document.getElementById('path-canvas').style     = style + "z-index: 3;";
-    document.getElementById('entities-canvas').style = style + "z-index: 2;";
+    document.getElementById('vectors-canvas').style = style + "z-index: 2;";
     document.getElementById('draw-canvas').style     = style + "z-index: 1;";
     document.getElementById('switch').style.width    = (c_h * 0.04) * 2 + "px";
 }
@@ -149,8 +179,8 @@ function setup() {
     draw_ctx    = draw_canvas.getContext('2d');
     path_canvas = document.getElementById('path-canvas');
     path_ctx    = path_canvas.getContext('2d');
-    ent_canvas  = document.getElementById('entities-canvas');
-    ent_ctx     = ent_canvas.getContext('2d');
+    vecs_canvas  = document.getElementById('vectors-canvas');
+    vecs_ctx     = vecs_canvas.getContext('2d');
 
     var client_w = document.documentElement.clientWidth;
     var client_h = document.documentElement.clientHeight;
@@ -160,10 +190,10 @@ function setup() {
     draw_canvas.height = client_h;
     path_canvas.width  = client_w;
     path_canvas.height = client_h;
-    ent_canvas.width   = client_w;
+    vecs_canvas.width   = client_w;
     draw_canvas.width  = client_w;
     draw_canvas.height = client_h;
-    ent_canvas.height  = client_h;
+    vecs_canvas.height  = client_h;
 
     // General
     document.getElementById('cpoints').addEventListener('click',
@@ -172,18 +202,18 @@ function setup() {
         function(event) {on_click(1)});
     // Touchscreen
     path_canvas.addEventListener('touchstart', 
-        function(event) {on_mouse_down(ent_canvas, event)});
+        function(event) {on_mouse_down(vecs_canvas, event)});
     path_canvas.addEventListener('touchmove',
-        function(event) {on_mouse_move(ent_canvas, event)});
+        function(event) {on_mouse_move(vecs_canvas, event)});
     path_canvas.addEventListener('touchend',
-        function(event) {on_mouse_up(ent_canvas, event)});
+        function(event) {on_mouse_up(vecs_canvas, event)});
     // Mouse
     path_canvas.addEventListener('mousedown', 
-        function(event) {on_mouse_down(ent_canvas, event)});
+        function(event) {on_mouse_down(vecs_canvas, event)});
     path_canvas.addEventListener('mousemove',
-        function(event) {on_mouse_move(ent_canvas, event)});
+        function(event) {on_mouse_move(vecs_canvas, event)});
     path_canvas.addEventListener('mouseup',
-        function(event) {on_mouse_up(ent_canvas, event)});
+        function(event) {on_mouse_up(vecs_canvas, event)});
 
     adjust_window();
 }
