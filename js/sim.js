@@ -1,7 +1,12 @@
 function calc_curve(v1, v2) {
     curve = [];
-    for (var t = 0; t < curve_accuracy - 1; t++) {
-        var s = t / curve_accuracy;
+
+    // Some magic formula for smoother speed
+    // on curves of different length.
+    var len = v1.dist(v2);
+    var steps = Math.sqrt(len) * curve_accuracy / 10000;
+    for (var t = 0; t < steps - 1; t++) {
+        var s = t / steps;
         // Basis functions
         var h1 =  2 * Math.pow(s, 3) - 3 * Math.pow(s, 2) + 1;
         var h2 = -2 * Math.pow(s, 3) + 3 * Math.pow(s, 2);

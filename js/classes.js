@@ -20,6 +20,11 @@ class Vector {
         return Math.atan2(this.y2 - this.y1, this.x2 - this.x1);
     }
 
+    dist(other) {
+        return Math.sqrt(Math.pow(this.x1 - other.x1, 2) +
+                         Math.pow(this.y1 - other.y1, 2));
+    }
+
     draw(ctx, rgb) {
         ctx.beginPath();
         ctx.strokeStyle = rgb;
@@ -43,8 +48,9 @@ class Vector {
 
 class Robot {
     constructor() {
-        this.curve_point = 0;
-        this.next_vector = 0;
+        this.curve       = 0;
+        this.pos         = 0;
+        this.next_vector = 1;
         this.x = 0;
         this.y = 0;
         this.a = 0;
@@ -115,13 +121,17 @@ class Robot {
             // And recalculating and redrawing all curves
             reset_path();
         }
-        this.curve_point = (this.curve_point + 1) % (curves.length * curve_accuracy);
-        this.next_vector = Math.floor(this.curve_point / curve_accuracy) + 1;
+        if (this.pos == curves[this.curve].length - 1) {
+            this.curve = (this.curve + 1) % curves.length;
+            this.next_vector = (this.next_vector + 1) % vectors.length;
+            this.pos = 0;
+        } else {
+            this.pos += 1;
+        }
     }
 
     draw() {
-        var seg = curves[(Math.floor(this.curve_point / curve_accuracy))];
-        var [x, y, tx, ty] = seg[this.curve_point % curve_accuracy];
+        var [x, y, tx, ty] = curves[this.curve][this.pos];
         var a = Math.atan2(tx, ty);
         [this.x, this.y, this.a] = [x, y, a];
 
