@@ -45,6 +45,10 @@ function on_mouse_down(canvas, event) {
                 moved_obstacle = i;
                 prev_pos = [mouse_pos.x, mouse_pos.y];
                 obstacles[i].clear(obst_ctx);
+                // And clearing "type" flag for all vectors
+                for (var j = 0; j < vectors.length; j++) {
+                    vectors[j].type = 0;
+                }
                 return;
             }
         }
@@ -208,9 +212,10 @@ function adjust_window() {
     }
     document.getElementById('path-canvas').style      = style + "z-index: 0;";
     document.getElementById('vectors-canvas').style   = style + "z-index: 1;";
-    document.getElementById('robot-canvas').style     = style + "z-index: 2;";
-    document.getElementById('obstacles-canvas').style = style + "z-index: 3;";
-    document.getElementById('draw-canvas').style      = style + "z-index: 4;";
+    document.getElementById('real-path-canvas').style = style + "z-index: 2;";
+    document.getElementById('robot-canvas').style     = style + "z-index: 3;";
+    document.getElementById('obstacles-canvas').style = style + "z-index: 4;";
+    document.getElementById('draw-canvas').style      = style + "z-index: 5;";
     document.getElementById('switch').style.width     = (c_h * 0.04) * 2 + "px";
 }
 
@@ -223,6 +228,8 @@ function setup() {
     path_ctx    = path_canvas.getContext('2d');
     vecs_canvas = document.getElementById('vectors-canvas');
     vecs_ctx    = vecs_canvas.getContext('2d');
+    real_canvas = document.getElementById('real-path-canvas');
+    real_ctx    = real_canvas.getContext('2d');
     robo_canvas = document.getElementById('robot-canvas');
     robo_ctx    = robo_canvas.getContext('2d');
     obst_canvas = document.getElementById('obstacles-canvas');
@@ -238,6 +245,8 @@ function setup() {
     path_canvas.height = client_h;
     vecs_canvas.width  = client_w;
     vecs_canvas.height = client_h;
+    real_canvas.width  = client_w;
+    real_canvas.height = client_h;
     robo_canvas.width  = client_w;
     robo_canvas.height = client_h;
     obst_canvas.width  = client_w;

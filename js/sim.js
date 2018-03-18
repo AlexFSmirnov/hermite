@@ -4,7 +4,7 @@ function calc_curve(v1, v2) {
     // Some magic formula for smoother speed
     // on curves of different length.
     var len = v1.dist(v2);
-    var steps = Math.sqrt(len) * curve_accuracy / 10000;
+    var steps = Math.sqrt(len) * curve_accuracy;
     for (var t = 0; t < steps - 1; t++) {
         var s = t / steps;
         // Basis functions
@@ -37,10 +37,24 @@ function calc_curve(v1, v2) {
                   d2 * v2.y1 + 
                   d3 * (v1.y2 - v1.y1) * speed_coeff + 
                   d4 * (v2.y2 - v2.y1) * speed_coeff);
-        curve.push([x, y, ty, tx]);
+        curve.push([x, y, tx, ty]);
     }
-    curve.push([v2.x1, v2.y1, v2.y2 - v2.y1, v2.x2 - v2.x1]);
+    curve.push([v2.x1, v2.y1, v2.x2 - v2.x1, v2.y2 - v2.y1]);
     return curve;
+}
+
+function draw_tangents() {
+    var v = new Vector(0, 0);
+    for (var i = 0; i < curves.length; i++) {
+        for (var j = 0; j < curves[i].length; j++) {
+            v.x1 = curves[i][j][0];
+            v.y1 = curves[i][j][1];
+            v.x2 = v.x1 + curves[i][j][2];
+            v.y2 = v.y1 + curves[i][j][3];
+            v.length = 50;
+            v.draw(draw_ctx);
+        }
+    }
 }
 
 function draw_curve(ctx, curve) {
