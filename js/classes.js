@@ -110,6 +110,7 @@ class Robot {
             v1.y2     = v1.y1 + curves[this.curve][this.pos][3];
             v1.type   = 1;
             v1.length = robot_sight.radius / 5;
+            v1.draw_arrow = draw_arrows;
 
             if (vectors[this.next_vector - 1].type == 1) {
                 vectors[this.next_vector - 1] = v1;
@@ -138,6 +139,7 @@ class Robot {
             v2.x2     = x2;
             v2.y2     = y2;
             v2.type   = 2;
+            v2.draw_arrow = draw_arrows;
             
             // Updating the next vector if it was the one previously 
             // added while trying to avoid obstacles or adding the
@@ -163,11 +165,12 @@ class Robot {
 
                 // Removing all unneeded vectors
                 var new_vectors = [];
-                for (var i = 0; i < vectors.length; i++) {
-                    if (vectors[i].type != 2) {
+                for (var i = 0; i < vectors.length - 1; i++) {
+                    if (!(vectors[i].type == 2 && vectors[i + 1].type == 1)) {
                         new_vectors.push(vectors[i]);
                     }
                 }
+                new_vectors.push(vectors[vectors.length - 1]);
                 vectors = new_vectors;
 
                 // Redrawing re-calculated path
