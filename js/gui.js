@@ -49,7 +49,6 @@ function on_mouse_down(canvas, event) {
                 for (var j = 0; j < vectors.length; j++) {
                     vectors[j].type = 0;
                 }
-                return;
             }
         }
         // Otherwise, creating a new obstacle
@@ -111,8 +110,14 @@ function on_mouse_move(canvas, event) {
             vectors[vectors.length - 1].draw(draw_ctx, "grey");
         } else if (action_type == "obstacles") {
             if (obstacles.length > 0) {
+                // Redrawing all other obstacles
+                obst_ctx.clearRect(0, 0, obst_canvas.width, obst_canvas.height);
+                for (var i = 0; i < obstacles.length - 1; i++) {
+                    obstacles[i].draw(obst_ctx);
+                }
+
                 // Based on previous information either moving 
-                // an obstacle, or drawing it.
+                // current obstacle, or drawing it.
                 if (moved_obstacle != -1) {
                     // Moving an obstacle
                     obstacles[moved_obstacle].move(prev_pos, mouse_pos.x, mouse_pos.y);
